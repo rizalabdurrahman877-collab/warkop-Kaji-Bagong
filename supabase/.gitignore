@@ -1,0 +1,10 @@
+# Dependencies
+node_modules/
+
+# Supabase local temp
+supabase/.temp/
+supabase/.branches/
+
+# dotenv
+.env
+.env.local

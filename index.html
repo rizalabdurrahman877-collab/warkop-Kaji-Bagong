@@ -1,0 +1,2138 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Kasir Warkop">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <title>Kasir — Warung Kaji Bagong</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f4f1ec;
+      color: #2b2b2b;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .splash-screen {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.7s ease, visibility 0.7s ease;
+    }
+
+    .splash-screen.hide {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .splash-logo-container {
+      width: 240px;
+      height: 240px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: splashPop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .splash-logo-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      mix-blend-mode: screen;
+    }
+
+    .splash-loader {
+      width: 80px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      margin-top: 30px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .splash-loader::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, #ffd700, transparent);
+      animation: splashLoading 1.3s ease-in-out infinite;
+    }
+
+    .splash-footer {
+      position: absolute;
+      bottom: 40px;
+      color: rgba(255, 215, 0, 0.5);
+      font-size: 11px;
+      letter-spacing: 2px;
+    }
+
+    @keyframes splashPop {
+      0% {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes splashLoading {
+      0% {
+        left: -100%;
+      }
+
+      100% {
+        left: 100%;
+      }
+    }
+
+    .app-container {
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      padding: 24px 16px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .app-container.show {
+      opacity: 1;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .input-panel {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    }
+
+    .input-panel h2 {
+      font-size: 18px;
+      color: #000;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #f4f1ec;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 6px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 16px;
+      border: 2px solid #e8dfd4;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s;
+      font-family: inherit;
+    }
+
+    .form-group input:focus {
+      border-color: #000;
+    }
+
+    .toggle-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .toggle-btn {
+      flex: 1;
+      padding: 10px 8px;
+      background: #f4f1ec;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+      line-height: 1.3;
+    }
+
+    .toggle-btn:hover {
+      background: #e8dfd4;
+    }
+
+    .toggle-btn.active {
+      background: #000;
+      color: #ffd700;
+      border-color: #000;
+    }
+
+    .btn-tambah {
+      width: 100%;
+      padding: 14px;
+      background: #000;
+      color: #ffd700;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 8px;
+    }
+
+    .btn-tambah:hover {
+      background: #222;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .keranjang-panel {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+      display: flex;
+      flex-direction: column;
+      max-height: calc(100vh - 50px);
+      position: sticky;
+      top: 24px;
+    }
+
+    .keranjang-header {
+      padding: 16px 16px 12px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .keranjang-header h2 {
+      font-size: 16px;
+      color: #000;
+    }
+
+    .keranjang-header .count {
+      background: #000;
+      color: #ffd700;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+
+    .keranjang-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 16px;
+      min-height: 100px;
+      max-height: 32vh;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: #bbb;
+      padding: 30px 0;
+      font-size: 13px;
+    }
+
+    .item-cart {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f4f1ec;
+    }
+
+    .item-cart:last-child {
+      border-bottom: none;
+    }
+
+    .item-cart .info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .item-cart .info .nama {
+      font-size: 13px;
+      font-weight: 600;
+      color: #2b2b2b;
+      line-height: 1.3;
+    }
+
+    .item-cart .info .subtotal {
+      font-size: 12px;
+      color: #999;
+      margin-top: 2px;
+    }
+
+    .qty-ctrl {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: #f4f1ec;
+      border-radius: 999px;
+      padding: 3px;
+    }
+
+    .qty-ctrl button {
+      width: 26px;
+      height: 26px;
+      border: none;
+      border-radius: 50%;
+      background: white;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 700;
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .qty-ctrl button:hover {
+      background: #000;
+      color: #ffd700;
+    }
+
+    .qty-ctrl .qty {
+      font-size: 13px;
+      font-weight: 700;
+      min-width: 18px;
+      text-align: center;
+      color: #000;
+    }
+
+    .keranjang-footer {
+      border-top: 2px solid #f4f1ec;
+      padding: 12px 16px 16px;
+      background: #fdfbf7;
+      border-radius: 0 0 12px 12px;
+    }
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #2b2b2b;
+    }
+
+    .total-row .total-value {
+      color: #000;
+    }
+
+    .metode-toggle {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .metode-btn {
+      flex: 1;
+      padding: 12px 8px;
+      background: #f4f1ec;
+      border: 2px solid transparent;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .metode-btn:hover {
+      background: #e8dfd4;
+    }
+
+    .metode-btn.active {
+      background: #000;
+      color: #ffd700;
+      border-color: #000;
+    }
+
+    .metode-btn .icon {
+      font-size: 20px;
+    }
+
+    .metode-btn .label {
+      font-size: 12px;
+    }
+
+    .bayar-section {
+      background: white;
+      border: 2px solid #e8dfd4;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+
+    .bayar-label {
+      font-size: 11px;
+      color: #333;
+      font-weight: 700;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .bayar-input-wrapper {
+      position: relative;
+    }
+
+    .bayar-currency {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 18px;
+      font-weight: 700;
+      color: #999;
+      pointer-events: none;
+    }
+
+    .bayar-input {
+      width: 100%;
+      padding: 14px 14px 14px 44px;
+      font-size: 22px;
+      font-weight: 700;
+      border: 2px solid #e8dfd4;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      font-family: inherit;
+      color: #000;
+      background: #fdfbf7;
+    }
+
+    .bayar-input:focus {
+      border-color: #000;
+      box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.1);
+      background: white;
+    }
+
+    .kembalian-display {
+      display: none;
+      margin-top: 10px;
+      padding: 16px;
+      border-radius: 10px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+
+    .kembalian-display.show {
+      display: block;
+    }
+
+    .kembalian-display.ok {
+      background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+      border: 2px solid #4caf50;
+    }
+
+    .kembalian-display.kurang {
+      background: linear-gradient(135deg, #ffebee, #ffcdd2);
+      border: 2px solid #e53935;
+    }
+
+    .kembalian-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 4px;
+    }
+
+    .kembalian-display.ok .kembalian-label {
+      color: #2e7d32;
+    }
+
+    .kembalian-display.kurang .kembalian-label {
+      color: #c62828;
+    }
+
+    .kembalian-value {
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .kembalian-display.ok .kembalian-value {
+      color: #1b5e20;
+    }
+
+    .kembalian-display.kurang .kembalian-value {
+      color: #b71c1c;
+    }
+
+    .bayar-btn {
+      width: 100%;
+      padding: 16px;
+      margin-top: 10px;
+      background: #000;
+      color: #ffd700;
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .bayar-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .bayar-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .floating-actions {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 50;
+    }
+
+    .floating-actions button {
+      background: #000;
+      color: #ffd700;
+      border: 2px solid #ffd700;
+      padding: 12px 18px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .floating-actions button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+      background: #222;
+    }
+
+    .floating-actions .install-btn {
+      background: #ffd700;
+      color: #000;
+      border-color: #ffd700;
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .struk {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      width: 100%;
+      max-width: 340px;
+      max-height: 90vh;
+      overflow-y: auto;
+      font-family: "Courier New", monospace;
+    }
+
+    .struk-header {
+      text-align: center;
+      border-bottom: 2px dashed #999;
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+    }
+
+    .struk-header .nama-toko {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .struk-header .sub {
+      font-size: 11px;
+      color: #666;
+      margin-top: 2px;
+    }
+
+    .struk-header .waktu {
+      font-size: 10px;
+      color: #888;
+      margin-top: 4px;
+    }
+
+    .struk-items {
+      font-size: 12px;
+      margin-bottom: 12px;
+    }
+
+    .struk-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      gap: 8px;
+    }
+
+    .struk-item .nama {
+      flex: 1;
+      word-break: break-word;
+    }
+
+    .struk-item .harga {
+      white-space: nowrap;
+    }
+
+    .struk-totals {
+      border-top: 1px dashed #999;
+      padding-top: 8px;
+      font-size: 12px;
+    }
+
+    .struk-totals .row {
+      display: flex;
+      justify-content: space-between;
+      padding: 2px 0;
+    }
+
+    .struk-totals .row.total {
+      font-weight: 700;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .struk-footer {
+      text-align: center;
+      font-size: 11px;
+      color: #666;
+      margin-top: 16px;
+      border-top: 1px dashed #999;
+      padding-top: 12px;
+    }
+
+    .modal-btns {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .modal-btns button {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-tutup {
+      background: #f4f1ec;
+      color: #333;
+    }
+
+    .btn-print {
+      background: #000;
+      color: #ffd700;
+    }
+
+    /* QRIS MODAL */
+    .qris-modal {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      width: 100%;
+      max-width: 380px;
+      max-height: 90vh;
+      overflow-y: auto;
+      text-align: center;
+    }
+
+    .qris-modal h2 {
+      color: #000;
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+
+    .qris-modal .qris-sub {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 16px;
+    }
+
+    .qris-code-box {
+      background: white;
+      border: 3px solid #000;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      display: inline-block;
+      position: relative;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .qris-code-box img {
+      display: block;
+      width: 240px;
+      height: 240px;
+      pointer-events: none;
+    }
+
+    .qris-code-hint {
+      font-size: 10px;
+      color: #888;
+      margin-bottom: 12px;
+      font-style: italic;
+    }
+
+    .qris-action-btns {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .qris-action-btns button {
+      flex: 1;
+      padding: 10px 8px;
+      background: #f4f1ec;
+      color: #333;
+      border: 2px solid #e8dfd4;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+
+    .qris-action-btns button:hover {
+      background: #e8dfd4;
+    }
+
+    .qris-action-btns button:active {
+      transform: scale(0.97);
+    }
+
+    .qris-total {
+      font-size: 28px;
+      font-weight: 800;
+      color: #000;
+      margin: 12px 0;
+    }
+
+    .qris-total-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #888;
+      font-weight: 600;
+    }
+
+    .qris-info {
+      background: #f4f1ec;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .qris-confirm-btn {
+      width: 100%;
+      padding: 14px;
+      background: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 8px;
+    }
+
+    .qris-confirm-btn:hover:not(:disabled) {
+      background: #43a047;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    }
+
+    .qris-confirm-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .qris-cancel-btn {
+      width: 100%;
+      padding: 12px;
+      background: #f4f1ec;
+      color: #333;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .qris-cancel-btn:hover {
+      background: #e8dfd4;
+    }
+
+    /* CONTEXT MENU UNTUK QR */
+    .qr-context-menu {
+      position: fixed;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
+      padding: 6px;
+      z-index: 500;
+      display: none;
+      min-width: 210px;
+      border: 1px solid #eee;
+      animation: menuPop 0.15s ease;
+    }
+
+    .qr-context-menu.show {
+      display: block;
+    }
+
+    .qr-context-menu button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      text-align: left;
+      padding: 10px 12px;
+      background: none;
+      border: none;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: 6px;
+      color: #333;
+      font-family: inherit;
+    }
+
+    .qr-context-menu button:hover {
+      background: #f4f1ec;
+    }
+
+    .qr-context-menu .divider {
+      height: 1px;
+      background: #eee;
+      margin: 4px 0;
+    }
+
+    @keyframes menuPop {
+      from {
+        opacity: 0;
+        transform: scale(0.92);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* LAPORAN */
+    .laporan-modal {
+      background: white;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .laporan-header {
+      padding: 16px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .laporan-header>div {
+      flex: 1;
+    }
+
+    .laporan-header h2 {
+      font-size: 18px;
+      color: #000;
+      margin: 0;
+    }
+
+    .laporan-date {
+      font-size: 13px;
+      color: #888;
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    .laporan-header .header-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .btn-export {
+      background: #4caf50;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn-export:hover {
+      background: #43a047;
+    }
+
+    .btn-refresh {
+      background: #2196f3;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-refresh:hover {
+      background: #1976d2;
+    }
+
+    .laporan-header .close-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #999;
+      padding: 0 4px;
+    }
+
+    .laporan-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .stat-card {
+      background: #f4f1ec;
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .stat-card .label {
+      font-size: 11px;
+      color: #333;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .stat-card .value {
+      font-size: 18px;
+      font-weight: 700;
+      color: #2b2b2b;
+      margin-top: 4px;
+    }
+
+    .stat-card.primary {
+      background: #000;
+      color: white;
+    }
+
+    .stat-card.primary .label {
+      color: rgba(255, 215, 0, 0.8);
+    }
+
+    .stat-card.primary .value {
+      color: #ffd700;
+    }
+
+    .trx-list {
+      font-size: 13px;
+    }
+
+    .trx-item {
+      padding: 10px 0;
+      border-bottom: 1px solid #f4f1ec;
+    }
+
+    .trx-item:last-child {
+      border-bottom: none;
+    }
+
+    .trx-header {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .trx-waktu {
+      color: #000;
+    }
+
+    .trx-total {
+      color: #b8860b;
+    }
+
+    .trx-metode {
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    .trx-metode.cash {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .trx-metode.qris {
+      background: #e3f2fd;
+      color: #1565c0;
+    }
+
+    .trx-detail {
+      font-size: 11px;
+      color: #888;
+    }
+
+    .sync-status {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      color: white;
+      z-index: 50;
+      opacity: 0;
+      transition: opacity 0.3s;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .sync-status.show {
+      opacity: 1;
+    }
+
+    .sync-status.ok {
+      background: #4caf50;
+    }
+
+    .sync-status.fail {
+      background: #ff9800;
+    }
+
+    @media (max-width: 900px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+
+      .keranjang-panel {
+        position: static;
+        max-height: none;
+      }
+
+      .floating-actions {
+        bottom: 16px;
+        right: 16px;
+      }
+    }
+
+    @media print {
+      @page {
+        size: 80mm auto;
+        margin: 3mm;
+      }
+
+      html,
+      body {
+        width: 80mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: white !important;
+      }
+
+      main,
+      #modalLaporan,
+      #modalQris,
+      .splash-screen,
+      .floating-actions,
+      .sync-status,
+      .qr-context-menu {
+        display: none !important;
+      }
+
+      #modalStruk.show {
+        display: block !important;
+        position: static !important;
+        inset: auto !important;
+        background: white !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+      }
+
+      .struk {
+        width: 100% !important;
+        max-width: 100% !important;
+        max-height: none !important;
+        overflow: visible !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+        font-size: 10px !important;
+        line-height: 1.4 !important;
+      }
+
+      .struk-header .nama-toko {
+        font-size: 13px !important;
+      }
+
+      .struk-header .sub,
+      .struk-header .waktu {
+        font-size: 9px !important;
+      }
+
+      .struk-item {
+        font-size: 10px !important;
+      }
+
+      .struk-totals .row {
+        font-size: 10px !important;
+      }
+
+      .struk-totals .row.total {
+        font-size: 11px !important;
+      }
+
+      .modal-btns,
+      .struk-hint {
+        display: none !important;
+      }
+
+      .struk-item,
+      .struk-totals {
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="splashScreen" class="splash-screen">
+    <div class="splash-logo-container">
+      <img src="logo.jpeg" alt="Kaji Bagong Logo">
+    </div>
+    <div class="splash-loader"></div>
+    <div class="splash-footer">KASIR DIGITAL</div>
+  </div>
+
+  <div id="appContainer" class="app-container">
+    <main>
+      <div class="input-panel">
+        <h2>✍️ Input Pesanan</h2>
+        <form id="formPesanan" onsubmit="tambahPesanan(event)">
+          <div class="form-group">
+            <label>Tipe Pesanan</label>
+            <div class="toggle-group" id="tipeToggle">
+              <button type="button" class="toggle-btn active" data-value="Makanan" onclick="setTipe('Makanan')">🍽️
+                Makanan</button>
+              <button type="button" class="toggle-btn" data-value="Minuman" onclick="setTipe('Minuman')">🥤
+                Minuman</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Nama Makanan / Minuman</label>
+            <input type="text" id="inputNama" placeholder="Contoh: Kopi Hitam" required autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label>Harga Dasar (Rp)</label>
+            <input type="number" id="inputHarga" placeholder="Contoh: 5000" min="0" required>
+          </div>
+          <div id="minumanOptions" style="display:none;">
+            <div class="form-group">
+              <label>Ukuran</label>
+              <div class="toggle-group" id="sizeToggle">
+                <button type="button" class="toggle-btn active" data-value="Biasa" onclick="setSize('Biasa')">🥃 Gelas
+                  Biasa</button>
+                <button type="button" class="toggle-btn" data-value="Jumbo" onclick="setSize('Jumbo')">🥤 Jumbo</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Suhu</label>
+              <div class="toggle-group" id="tempToggle">
+                <button type="button" class="toggle-btn active" data-value="Dingin" onclick="setTemp('Dingin')">🧊
+                  Dingin</button>
+                <button type="button" class="toggle-btn" data-value="Panas" onclick="setTemp('Panas')">♨️ Panas</button>
+              </div>
+            </div>
+            <div class="form-group" id="jumboSurchargeGroup" style="display:none;">
+              <label>Tambahan Harga Jumbo (Rp)</label>
+              <input type="number" id="inputJumboSurcharge" value="2000" min="0">
+            </div>
+          </div>
+          <button type="submit" class="btn-tambah">+ Tambah ke Pesanan</button>
+        </form>
+      </div>
+
+      <div class="keranjang-panel">
+        <div class="keranjang-header">
+          <h2>🛒 Pesanan</h2>
+          <span class="count" id="cartCount">0</span>
+        </div>
+        <div class="keranjang-list" id="cartList">
+          <div class="empty-state">Belum ada pesanan</div>
+        </div>
+        <div class="keranjang-footer">
+          <div class="total-row">
+            <span>Total</span>
+            <span class="total-value" id="totalDisplay">Rp 0</span>
+          </div>
+
+          <div class="metode-toggle" id="metodeToggle">
+            <button type="button" class="metode-btn active" data-value="CASH" onclick="setMetode('CASH')">
+              <span class="icon">💵</span>
+              <span class="label">Cash</span>
+            </button>
+            <button type="button" class="metode-btn" data-value="QRIS" onclick="setMetode('QRIS')">
+              <span class="icon">📱</span>
+              <span class="label">QRIS</span>
+            </button>
+          </div>
+
+          <div id="cashSection">
+            <div class="bayar-section">
+              <div class="bayar-label">💵 Uang Bayar (Ketik Manual)</div>
+              <div class="bayar-input-wrapper">
+                <span class="bayar-currency">Rp</span>
+                <input type="number" class="bayar-input" id="inputBayar" placeholder="0" inputmode="numeric"
+                  autocomplete="off">
+              </div>
+              <div class="kembalian-display" id="kembalianDisplay">
+                <div class="kembalian-label" id="kembalianLabel">Kembalian</div>
+                <div class="kembalian-value" id="kembalianValue">Rp 0</div>
+              </div>
+            </div>
+          </div>
+
+          <div id="qrisSection" style="display:none;">
+            <div class="bayar-section" style="text-align:center;">
+              <div class="bayar-label">📱 Pembayaran QRIS</div>
+              <p style="font-size:12px;color:#666;line-height:1.5;margin-bottom:8px;">
+                Klik <strong>Bayar</strong> untuk menampilkan QR Code<br>
+                lalu scan dengan aplikasi e-wallet / m-banking
+              </p>
+            </div>
+          </div>
+
+          <button class="bayar-btn" id="btnBayar" onclick="bayar()" disabled>💰 Bayar</button>
+        </div>
+      </div>
+    </main>
+
+    <div class="floating-actions">
+      <button id="installBtn" class="install-btn" style="display:none;" onclick="installApp()">📱 Install App</button>
+      <button onclick="bukaLaporan()">📊 Laporan</button>
+    </div>
+
+    <!-- MODAL STRUK -->
+    <div class="modal-overlay" id="modalStruk">
+      <div class="struk" id="strukContent"></div>
+    </div>
+
+    <!-- MODAL QRIS -->
+    <div class="modal-overlay" id="modalQris">
+      <div class="qris-modal">
+        <h2>📱 Scan QRIS</h2>
+        <p class="qris-sub">Bayar pakai GoPay, OVO, Dana, ShopeePay, BCA, dll</p>
+
+        <div class="qris-code-box" id="qrisCodeBox">
+          <img id="qrisImage" src="" alt="QRIS Code" draggable="false">
+        </div>
+        <p class="qris-code-hint">💡 Tahan lama / klik kanan QR untuk menu salin</p>
+
+        <div class="qris-action-btns">
+          <button type="button" onclick="copyQrUrl()">📋 Salin URL QR</button>
+          <button type="button" onclick="downloadQr()">⬇️ Unduh QR</button>
+        </div>
+
+        <div class="qris-total-label">Total Pembayaran</div>
+        <div class="qris-total" id="qrisTotal">Rp 0</div>
+
+        <div class="qris-info">
+          💡 <strong>Simulator:</strong> Ini adalah QR code contoh untuk demo.<br>
+          Setelah pembayaran diterima, klik tombol di bawah untuk konfirmasi.
+        </div>
+
+        <button class="qris-confirm-btn" id="btnQrisConfirm" onclick="konfirmasiQris()">
+          ✅ Konfirmasi Pembayaran Diterima
+        </button>
+        <button class="qris-cancel-btn" onclick="tutupModalQris()">
+          Batal
+        </button>
+      </div>
+    </div>
+
+    <!-- CONTEXT MENU QR -->
+    <div class="qr-context-menu" id="qrContextMenu">
+      <button type="button" onclick="copyQrUrl(); hideQrMenu();">📋 Salin URL QR</button>
+      <button type="button" onclick="copyQrData(); hideQrMenu();">🔗 Salin Data QR</button>
+      <button type="button" onclick="downloadQr(); hideQrMenu();">⬇️ Unduh Gambar QR</button>
+      <div class="divider"></div>
+      <button type="button" onclick="openQrNewTab(); hideQrMenu();">🔍 Buka di Tab Baru</button>
+    </div>
+
+    <!-- MODAL LAPORAN -->
+    <div class="modal-overlay" id="modalLaporan">
+      <div class="laporan-modal">
+        <div class="laporan-header">
+          <div>
+            <h2>📊 Laporan</h2>
+            <p class="laporan-date" id="laporanDate">—</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn-refresh" onclick="refreshLaporan()" title="Refresh manual">🔄</button>
+            <button class="btn-export" onclick="exportCSV()" title="Download semua transaksi">📥 CSV</button>
+            <button class="close-btn" onclick="tutupLaporan()">×</button>
+          </div>
+        </div>
+        <div class="laporan-body" id="laporanBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="syncStatus" class="sync-status"></div>
+
+  <script>
+    // ============================================
+    // KONFIGURASI SUPABASE
+    // ============================================
+    const SUPABASE_URL = "https://pcgnqyuhfumasagjapci.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBjZ25xeXVoZnVtYXNhZ2phcGNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI4NDAwOTYsImV4cCI6MjEwODQxNjA5Nn0.vvoXiFvlehnkSUxLScNhzESHNjF6LjlfzrdBVTBwy5w";
+
+    // ============================================
+    // STATE
+    // ============================================
+    let keranjang = [];
+    let tipePesanan = "Makanan";
+    let sizeMinuman = "Biasa";
+    let tempMinuman = "Dingin";
+    let metodePembayaran = "CASH";
+    let deferredPrompt = null;
+    let laporanInterval = null;
+    let pendingQrisTrx = null;
+
+    // State QR — dipakai untuk fitur copy/unduh
+    let pendingQrUrl = "";
+    let pendingQrData = "";
+
+    // ============================================
+    // SPLASH
+    // ============================================
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        const splash = document.getElementById('splashScreen');
+        const app = document.getElementById('appContainer');
+        splash.classList.add('hide');
+        app.classList.add('show');
+        setTimeout(() => splash.remove(), 800);
+      }, 1800);
+    });
+
+    // ============================================
+    // PWA INSTALL
+    // ============================================
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const btn = document.getElementById('installBtn');
+      if (btn) btn.style.display = 'flex';
+    });
+
+    function installApp() {
+      if (!deferredPrompt) {
+        alert('Aplikasi sudah terinstall, atau browser tidak mendukung install PWA.');
+        return;
+      }
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choice) => {
+        if (choice.outcome === 'accepted') {
+          document.getElementById('installBtn').style.display = 'none';
+        }
+        deferredPrompt = null;
+      });
+    }
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch((err) => console.log('SW:', err));
+      });
+    }
+
+    // ============================================
+    // UTILS
+    // ============================================
+    function formatRupiah(angka) {
+      return "Rp " + (angka || 0).toLocaleString("id-ID");
+    }
+
+    // Clipboard dengan fallback (untuk browser lama / http)
+    function copyText(text) {
+      return new Promise((resolve, reject) => {
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(text).then(resolve).catch(reject);
+          return;
+        }
+        try {
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          ta.style.position = "fixed";
+          ta.style.top = "-9999px";
+          ta.style.left = "-9999px";
+          ta.setAttribute("readonly", "");
+          document.body.appendChild(ta);
+          ta.select();
+          ta.setSelectionRange(0, ta.value.length);
+          const ok = document.execCommand("copy");
+          document.body.removeChild(ta);
+          ok ? resolve() : reject(new Error("Copy gagal"));
+        } catch (err) {
+          reject(err);
+        }
+      });
+    }
+
+    // ============================================
+    // FITUR COPY / DOWNLOAD QR
+    // ============================================
+    function copyQrUrl() {
+      if (!pendingQrUrl) {
+        showSyncStatus("⚠️ Belum ada URL QR", "fail");
+        return;
+      }
+      copyText(pendingQrUrl)
+        .then(() => showSyncStatus("✅ URL QR berhasil disalin", "ok"))
+        .catch(() => showSyncStatus("⚠️ Gagal menyalin URL", "fail"));
+    }
+
+    function copyQrData() {
+      if (!pendingQrData) {
+        showSyncStatus("⚠️ Belum ada data QR", "fail");
+        return;
+      }
+      copyText(pendingQrData)
+        .then(() => showSyncStatus("✅ Data QR berhasil disalin", "ok"))
+        .catch(() => showSyncStatus("⚠️ Gagal menyalin data", "fail"));
+    }
+
+    function downloadQr() {
+      if (!pendingQrUrl) {
+        showSyncStatus("⚠️ Belum ada QR untuk diunduh", "fail");
+        return;
+      }
+      const a = document.createElement("a");
+      a.href = pendingQrUrl;
+      a.download = `qris-kaji-bagong-${Date.now()}.png`;
+      a.target = "_blank";
+      a.rel = "noopener";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showSyncStatus("✅ QR diunduh", "ok");
+    }
+
+    function openQrNewTab() {
+      if (!pendingQrUrl) return;
+      window.open(pendingQrUrl, "_blank", "noopener");
+    }
+
+    // ============================================
+    // CONTEXT MENU UNTUK QR (klik kanan / long-press)
+    // ============================================
+    function showQrMenu(x, y) {
+      const menu = document.getElementById("qrContextMenu");
+      if (!menu) return;
+      menu.classList.add("show");
+
+      // Pastikan tidak keluar dari layar
+      const rect = menu.getBoundingClientRect();
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      if (x + rect.width > vw) x = vw - rect.width - 8;
+      if (y + rect.height > vh) y = vh - rect.height - 8;
+      if (x < 8) x = 8;
+      if (y < 8) y = 8;
+
+      menu.style.left = x + "px";
+      menu.style.top = y + "px";
+    }
+
+    function hideQrMenu() {
+      const menu = document.getElementById("qrContextMenu");
+      if (menu) menu.classList.remove("show");
+    }
+
+    // Setup listener long-press + klik kanan pada QR
+    function setupQrContextMenu() {
+      const box = document.getElementById("qrisCodeBox");
+      if (!box) return;
+
+      // Desktop: klik kanan
+      box.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        showQrMenu(e.clientX, e.clientY);
+      });
+
+      // Mobile: long-press
+      let pressTimer = null;
+      box.addEventListener("touchstart", (e) => {
+        const t = e.touches[0];
+        pressTimer = setTimeout(() => {
+          showQrMenu(t.clientX, t.clientY);
+          pressTimer = null;
+        }, 550);
+      }, { passive: true });
+
+      box.addEventListener("touchend", () => {
+        if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; }
+      });
+      box.addEventListener("touchmove", () => {
+        if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; }
+      });
+      box.addEventListener("touchcancel", () => {
+        if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; }
+      });
+
+      // Tap biasa (desktop kiri) → tampilkan menu juga biar discoverable
+      box.addEventListener("click", (e) => {
+        if (e.pointerType === "touch") return; // abaikan di touch
+        if (e.button === 0) {
+          // biarkan default; menu hanya via klik kanan
+        }
+      });
+    }
+
+    // Tutup menu kalau klik di luar
+    document.addEventListener("click", (e) => {
+      const menu = document.getElementById("qrContextMenu");
+      if (!menu) return;
+      if (!menu.classList.contains("show")) return;
+      if (!menu.contains(e.target)) hideQrMenu();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") hideQrMenu();
+    });
+
+    // ============================================
+    // METODE PEMBAYARAN
+    // ============================================
+    function setMetode(metode) {
+      metodePembayaran = metode;
+      document.querySelectorAll("#metodeToggle .metode-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.value === metode);
+      });
+      document.getElementById("cashSection").style.display = metode === "CASH" ? "block" : "none";
+      document.getElementById("qrisSection").style.display = metode === "QRIS" ? "block" : "none";
+      updateKembalian();
+    }
+
+    // ============================================
+    // SYNC KE SUPABASE
+    // ============================================
+    async function syncToSupabase(trx) {
+      try {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/transaksi`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "apikey": SUPABASE_KEY,
+            "Authorization": `Bearer ${SUPABASE_KEY}`,
+            "Prefer": "return=minimal"
+          },
+          body: JSON.stringify({
+            waktu: trx.waktu,
+            items: trx.items,
+            total: trx.total,
+            bayar: trx.bayar,
+            kembalian: trx.kembalian,
+            metode: trx.metode
+          })
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Supabase error: ${response.status} ${errorText}`);
+        }
+
+        showSyncStatus("✅ Tersimpan ke Database", "ok");
+        return true;
+      } catch (err) {
+        console.error("Sync error:", err);
+        showSyncStatus("⚠️ Gagal kirim, cek internet", "fail");
+        return false;
+      }
+    }
+
+    function showSyncStatus(msg, type) {
+      const el = document.getElementById("syncStatus");
+      if (!el) return;
+      el.textContent = msg;
+      el.className = "sync-status show " + type;
+      setTimeout(() => el.classList.remove("show"), 3000);
+    }
+
+    // ============================================
+    // EXPORT CSV
+    // ============================================
+    async function exportCSV() {
+      try {
+        const response = await fetch(
+          `${SUPABASE_URL}/rest/v1/transaksi?select=*&order=waktu.desc`,
+          {
+            headers: {
+              "apikey": SUPABASE_KEY,
+              "Authorization": `Bearer ${SUPABASE_KEY}`
+            }
+          }
+        );
+
+        if (!response.ok) throw new Error("Gagal ambil data");
+
+        const data = await response.json();
+        if (data.length === 0) {
+          alert("Belum ada transaksi untuk di-export");
+          return;
+        }
+
+        let csv = "No,Waktu,Metode,Total,Bayar,Kembalian,Item\n";
+        data.forEach((t, i) => {
+          const d = new Date(t.waktu);
+          const tanggal = d.toLocaleDateString("id-ID");
+          const jam = d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+          const itemsDetail = t.items.map(x => `${x.nama} (${x.qty}x)`).join("; ");
+          const escapedItems = itemsDetail.replace(/"/g, '""');
+          const metode = t.metode || "CASH";
+          csv += `${i + 1},"${tanggal} ${jam}",${metode},${t.total},${t.bayar},${t.kembalian},"${escapedItems}"\n`;
+        });
+
+        const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `transaksi-kaji-bagong-${new Date().toISOString().split("T")[0]}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        showSyncStatus("✅ File CSV ter-download", "ok");
+      } catch (err) {
+        alert("Gagal export: " + err.message);
+      }
+    }
+
+    // ============================================
+    // TOGGLE HANDLERS
+    // ============================================
+    function setTipe(tipe) {
+      tipePesanan = tipe;
+      document.querySelectorAll("#tipeToggle .toggle-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.value === tipe);
+      });
+      document.getElementById("minumanOptions").style.display = tipe === "Minuman" ? "block" : "none";
+    }
+
+    function setSize(size) {
+      sizeMinuman = size;
+      document.querySelectorAll("#sizeToggle .toggle-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.value === size);
+      });
+      document.getElementById("jumboSurchargeGroup").style.display = size === "Jumbo" ? "block" : "none";
+    }
+
+    function setTemp(temp) {
+      tempMinuman = temp;
+      document.querySelectorAll("#tempToggle .toggle-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.value === temp);
+      });
+    }
+
+    // ============================================
+    // TAMBAH PESANAN
+    // ============================================
+    function tambahPesanan(e) {
+      e.preventDefault();
+      const inputNama = document.getElementById("inputNama");
+      const inputHarga = document.getElementById("inputHarga");
+      const namaBase = inputNama.value.trim();
+      const hargaBase = parseInt(inputHarga.value);
+      if (!namaBase || isNaN(hargaBase) || hargaBase <= 0) return;
+
+      let displayNama = namaBase;
+      let finalHarga = hargaBase;
+
+      if (tipePesanan === "Minuman") {
+        displayNama = `${namaBase} (${sizeMinuman}, ${tempMinuman})`;
+        if (sizeMinuman === "Jumbo") {
+          const surcharge = parseInt(document.getElementById("inputJumboSurcharge").value) || 0;
+          finalHarga = hargaBase + surcharge;
+        }
+      }
+
+      const id = displayNama.toLowerCase();
+      const existing = keranjang.find(i => i.id === id);
+      if (existing) existing.qty++;
+      else keranjang.push({ id, nama: displayNama, harga: finalHarga, qty: 1 });
+
+      renderKeranjang();
+      inputNama.value = "";
+      inputHarga.value = "";
+      inputNama.focus();
+    }
+
+    function ubahQty(id, delta) {
+      const item = keranjang.find(i => i.id === id);
+      if (!item) return;
+      item.qty += delta;
+      if (item.qty <= 0) keranjang = keranjang.filter(i => i.id !== id);
+      renderKeranjang();
+    }
+
+    function getTotal() {
+      return keranjang.reduce((sum, i) => sum + i.harga * i.qty, 0);
+    }
+
+    function renderKeranjang() {
+      const list = document.getElementById("cartList");
+      const count = document.getElementById("cartCount");
+      const totalQty = keranjang.reduce((s, i) => s + i.qty, 0);
+      count.textContent = totalQty;
+
+      if (keranjang.length === 0) {
+        list.innerHTML = '<div class="empty-state">Belum ada pesanan</div>';
+      } else {
+        list.innerHTML = keranjang.map(i => `
+      <div class="item-cart">
+        <div class="info">
+          <div class="nama">${i.nama}</div>
+          <div class="subtotal">${formatRupiah(i.harga * i.qty)}</div>
+        </div>
+        <div class="qty-ctrl">
+          <button type="button" onclick="ubahQty('${i.id}', -1)">−</button>
+          <span class="qty">${i.qty}</span>
+          <button type="button" onclick="ubahQty('${i.id}', 1)">+</button>
+        </div>
+      </div>
+    `).join("");
+      }
+
+      document.getElementById("totalDisplay").textContent = formatRupiah(getTotal());
+      updateKembalian();
+    }
+
+    function updateKembalian() {
+      const total = getTotal();
+      const btn = document.getElementById("btnBayar");
+
+      if (metodePembayaran === "QRIS") {
+        btn.disabled = keranjang.length === 0 || total === 0;
+        return;
+      }
+
+      const bayar = parseInt(document.getElementById("inputBayar").value) || 0;
+      const display = document.getElementById("kembalianDisplay");
+      const label = document.getElementById("kembalianLabel");
+      const value = document.getElementById("kembalianValue");
+
+      if (bayar > 0 && total > 0) {
+        const kembali = bayar - total;
+        display.classList.add("show");
+
+        if (kembali >= 0) {
+          display.className = "kembalian-display show ok";
+          label.textContent = "💵 Kembalian";
+          value.textContent = formatRupiah(kembali);
+        } else {
+          display.className = "kembalian-display show kurang";
+          label.textContent = "⚠️ Uang Kurang";
+          value.textContent = formatRupiah(Math.abs(kembali));
+        }
+      } else {
+        display.classList.remove("show");
+      }
+
+      btn.disabled = keranjang.length === 0 || bayar < total || total === 0;
+    }
+
+    // ============================================
+    // BAYAR
+    // ============================================
+    function bayar() {
+      const total = getTotal();
+      if (keranjang.length === 0 || total === 0) return;
+
+      if (metodePembayaran === "QRIS") {
+        bukaModalQris(total);
+        return;
+      }
+
+      const bayar = parseInt(document.getElementById("inputBayar").value) || 0;
+      if (bayar < total) return;
+
+      const trx = {
+        id: Date.now().toString(),
+        waktu: new Date().toISOString(),
+        items: JSON.parse(JSON.stringify(keranjang)),
+        total,
+        bayar,
+        kembalian: bayar - total,
+        metode: "CASH",
+      };
+
+      syncToSupabase(trx);
+      tampilkanStruk(trx);
+      resetKeranjang();
+    }
+
+    // ============================================
+    // QRIS FLOW
+    // ============================================
+    function bukaModalQris(total) {
+      pendingQrisTrx = {
+        id: Date.now().toString(),
+        waktu: new Date().toISOString(),
+        items: JSON.parse(JSON.stringify(keranjang)),
+        total,
+        bayar: total,
+        kembalian: 0,
+        metode: "QRIS",
+      };
+
+      // Simpan data & URL QR ke state global
+      pendingQrData = `QRIS-SIMULATOR|TRX:${pendingQrisTrx.id}|TOTAL:${total}|MERCHANT:KAJI BAGONG`;
+      pendingQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(pendingQrData)}`;
+
+      document.getElementById("qrisImage").src = pendingQrUrl;
+      document.getElementById("qrisTotal").textContent = formatRupiah(total);
+      document.getElementById("modalQris").classList.add("show");
+    }
+
+    function konfirmasiQris() {
+      if (!pendingQrisTrx) return;
+
+      const btn = document.getElementById("btnQrisConfirm");
+      btn.disabled = true;
+      btn.textContent = "⏳ Memproses...";
+
+      setTimeout(async () => {
+        await syncToSupabase(pendingQrisTrx);
+        tutupModalQris();
+        tampilkanStruk(pendingQrisTrx);
+        resetKeranjang();
+        pendingQrisTrx = null;
+
+        btn.disabled = false;
+        btn.textContent = "✅ Konfirmasi Pembayaran Diterima";
+      }, 800);
+    }
+
+    function tutupModalQris() {
+      document.getElementById("modalQris").classList.remove("show");
+      hideQrMenu();
+      pendingQrisTrx = null;
+      pendingQrUrl = "";
+      pendingQrData = "";
+      const btn = document.getElementById("btnQrisConfirm");
+      btn.disabled = false;
+      btn.textContent = "✅ Konfirmasi Pembayaran Diterima";
+    }
+
+    function resetKeranjang() {
+      keranjang = [];
+      document.getElementById("inputBayar").value = "";
+      renderKeranjang();
+    }
+
+    // ============================================
+    // STRUK
+    // ============================================
+    function tampilkanStruk(trx) {
+      const waktu = new Date(trx.waktu).toLocaleString("id-ID", {
+        day: "2-digit", month: "2-digit", year: "numeric",
+        hour: "2-digit", minute: "2-digit"
+      });
+
+      const itemsHTML = trx.items.map(i => `
+    <div class="struk-item">
+      <span class="nama">${i.nama}</span>
+      <span class="harga">${i.qty}×${formatRupiah(i.harga)}</span>
+    </div>
+  `).join("");
+
+      const metodeLabel = trx.metode === "QRIS" ? "📱 QRIS" : "💵 CASH";
+      const bayarRow = trx.metode === "QRIS"
+        ? `<div class="row"><span>Bayar (QRIS)</span><span>${formatRupiah(trx.total)}</span></div>`
+        : `<div class="row"><span>Bayar</span><span>${formatRupiah(trx.bayar)}</span></div>
+       <div class="row"><span>Kembali</span><span>${formatRupiah(trx.kembalian)}</span></div>`;
+
+      document.getElementById("strukContent").innerHTML = `
+    <div class="struk-header">
+      <div class="nama-toko">KAJI BAGONG</div>
+      <div class="sub">Warkop • Kopi • Cerita</div>
+      <div class="waktu">${waktu}</div>
+    </div>
+    <div class="struk-items">${itemsHTML}</div>
+    <div class="struk-totals">
+      <div class="row total"><span>TOTAL</span><span>${formatRupiah(trx.total)}</span></div>
+      ${bayarRow}
+      <div class="row" style="margin-top:6px;font-size:10px;color:#666;"><span>Metode</span><span>${metodeLabel}</span></div>
+    </div>
+    <div class="struk-footer">Terima kasih 🙏<br>Selamat menikmati</div>
+    <div class="modal-btns">
+      <button type="button" class="btn-tutup" onclick="tutupStruk()">Tutup</button>
+      <button type="button" class="btn-print" onclick="window.print()">🖨️ Print / PDF</button>
+    </div>
+  `;
+      document.getElementById("modalStruk").classList.add("show");
+    }
+
+    function tutupStruk() {
+      document.getElementById("modalStruk").classList.remove("show");
+    }
+
+    // ============================================
+    // LAPORAN (Auto-refresh)
+    // ============================================
+    async function fetchLaporanFromCloud() {
+      const response = await fetch(
+        `${SUPABASE_URL}/rest/v1/transaksi?select=*&order=waktu.desc&limit=1000`,
+        {
+          headers: {
+            "apikey": SUPABASE_KEY,
+            "Authorization": `Bearer ${SUPABASE_KEY}`
+          }
+        }
+      );
+      if (!response.ok) throw new Error("Gagal ambil data");
+      return await response.json();
+    }
+
+    function renderLaporan(allTransactions) {
+      const sekarang = new Date();
+      const hariIniStr = sekarang.toDateString();
+      const laporanBody = document.getElementById("laporanBody");
+
+      const trxHariIni = allTransactions.filter(t => {
+        try {
+          return new Date(t.waktu).toDateString() === hariIniStr;
+        } catch {
+          return false;
+        }
+      });
+
+      const totalPendapatan = trxHariIni.reduce((s, t) => s + Number(t.total || 0), 0);
+      const totalItem = trxHariIni.reduce((s, t) => {
+        return s + (t.items ? t.items.reduce((sum, i) => sum + i.qty, 0) : 0);
+      }, 0);
+
+      const totalCash = trxHariIni.filter(t => (t.metode || "CASH") === "CASH")
+        .reduce((s, t) => s + Number(t.total || 0), 0);
+      const totalQris = trxHariIni.filter(t => t.metode === "QRIS")
+        .reduce((s, t) => s + Number(t.total || 0), 0);
+
+      let trxHTML = "";
+      if (trxHariIni.length === 0) {
+        trxHTML = '<div class="empty-state">Belum ada transaksi hari ini</div>';
+      } else {
+        trxHTML = trxHariIni.map(t => {
+          const waktu = new Date(t.waktu).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+          const detail = t.items.map(i => `${i.nama}×${i.qty}`).join(", ");
+          const metode = t.metode || "CASH";
+          const metodeClass = metode === "QRIS" ? "qris" : "cash";
+          return `
+        <div class="trx-item">
+          <div class="trx-header">
+            <span>
+              <span class="trx-waktu">${waktu}</span>
+              <span class="trx-metode ${metodeClass}">${metode}</span>
+            </span>
+            <span class="trx-total">${formatRupiah(t.total)}</span>
+          </div>
+          <div class="trx-detail">${detail}</div>
+        </div>
+      `;
+        }).join("");
+      }
+
+      laporanBody.innerHTML = `
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="label">Transaksi</div>
+        <div class="value">${trxHariIni.length}</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Item Terjual</div>
+        <div class="value">${totalItem}</div>
+      </div>
+      <div class="stat-card primary" style="grid-column: 1 / -1;">
+        <div class="label">Total Pendapatan</div>
+        <div class="value">${formatRupiah(totalPendapatan)}</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">💵 Cash</div>
+        <div class="value">${formatRupiah(totalCash)}</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">📱 QRIS</div>
+        <div class="value">${formatRupiah(totalQris)}</div>
+      </div>
+    </div>
+    <div class="trx-list">${trxHTML}</div>
+    <p style="text-align:center; font-size:11px; color:#888; margin-top:16px;">
+      Total ${allTransactions.length} transaksi di cloud.<br>
+      <span style="color:#4caf50;">🔄 Auto-refresh setiap 10 detik</span>
+    </p>
+  `;
+    }
+
+    async function refreshLaporan() {
+      const laporanBody = document.getElementById("laporanBody");
+      const loadingHTML = '<div style="text-align:center;padding:40px;color:#888;">🔄 Memuat data...</div>';
+      if (!laporanBody.innerHTML || laporanBody.innerHTML.includes("Belum ada")) {
+        laporanBody.innerHTML = loadingHTML;
+      }
+
+      try {
+        const allTransactions = await fetchLaporanFromCloud();
+        renderLaporan(allTransactions);
+        const now = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+        const tgl = new Date().toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+        document.getElementById("laporanDate").textContent = `📅 ${tgl} — update ${now}`;
+      } catch (err) {
+        console.error("Gagal load laporan:", err);
+        laporanBody.innerHTML = `
+      <div class="empty-state">
+        ⚠️ Gagal memuat laporan.<br>
+        <small style="color:#c62828;">${err.message}</small>
+        <br><br>
+        <button onclick="refreshLaporan()" style="padding:10px 20px;background:#000;color:#ffd700;border:none;border-radius:8px;font-weight:700;cursor:pointer;">
+          🔄 Coba Lagi
+        </button>
+      </div>
+    `;
+      }
+    }
+
+    function bukaLaporan() {
+      document.getElementById("modalLaporan").classList.add("show");
+      refreshLaporan();
+      if (laporanInterval) clearInterval(laporanInterval);
+      laporanInterval = setInterval(refreshLaporan, 10000);
+    }
+
+    function tutupLaporan() {
+      document.getElementById("modalLaporan").classList.remove("show");
+      if (laporanInterval) {
+        clearInterval(laporanInterval);
+        laporanInterval = null;
+      }
+    }
+
+    // ============================================
+    // INIT
+    // ============================================
+    document.getElementById("inputBayar").addEventListener("input", updateKembalian);
+    setupQrContextMenu();
+    renderKeranjang();
+  </script>
+
+</body>
+
+</html>
